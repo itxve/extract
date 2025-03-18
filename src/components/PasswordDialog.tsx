@@ -35,7 +35,7 @@ const PasswordDialog = ({
   return (
     <Modal isOpen={isOpen} onClose={handleClose}>
       <ModalContent>
-        <ModalHeader>请输入解压密码</ModalHeader>
+        <ModalHeader>请输入正确的解压密码</ModalHeader>
         <ModalBody>
           <Input
             type="password"

@@ -24,9 +24,10 @@ function App() {
   const [hh, setHH] = useState(600);
   const [uzLoading, setUzloading] = useState(false);
   const [passwordRequire, setPasswordRequire] = useState(false);
+  const [extractPasswordRequire, setExtractPasswordRequire] = useState(false);
   const [password, setPassword] = useState("");
-
   const [zipList, setZipList] = useState<TreeNode<ArchiveEntry>[]>([]);
+  const [extractPath, setExtractPath] = useState("");
 
   const _extensions = [
     "7z",
@@ -160,6 +161,33 @@ function App() {
     setPasswordRequire(false);
   };
 
+  const handleExtractPasswordConfirm = (password: string) => {
+    setPassword(password);
+    setExtractPasswordRequire(false);
+    extract(extractPath, password);
+  };
+
+  const extract = (extractPath: string, password: string) => {
+    setUzloading(true);
+    setTimeout(() => {
+      new Promise(async (ok, _reject) => {
+        archiveExtract(v, extractPath, password)
+          .then(ok)
+          .catch((err) => {
+            if (err.MsgError == "密码错误") {
+              setExtractPasswordRequire(true);
+            } else {
+              alert(JSON.stringify(err));
+              console.log("err :", err);
+            }
+          })
+          .finally(() => {
+            setUzloading(false);
+          });
+        alert("解压完成");
+      });
+    }, 10);
+  };
   const zip_to = async () => {
     const file = await open({
       multiple: false,
@@ -167,19 +195,8 @@ function App() {
     });
 
     if (file) {
-      setUzloading(true);
-      setTimeout(() => {
-        new Promise(async (ok, _reject) => {
-          try {
-            // 使用 await 等待解压完成，避免异步操作导致状态更新混乱
-            ok(await archiveExtract(v, file, password));
-          } catch (err) {
-            console.log("err :", err);
-          } finally {
-            setUzloading(false);
-          }
-        });
-      }, 10);
+      setExtractPath(file);
+      extract(file, password);
     }
   };
 
@@ -194,6 +211,12 @@ function App() {
         isOpen={passwordRequire}
         onClose={() => setPasswordRequire(false)}
         onConfirm={handlePasswordConfirm}
+      />
+
+      <PasswordDialog
+        isOpen={extractPasswordRequire}
+        onClose={() => setExtractPasswordRequire(false)}
+        onConfirm={handleExtractPasswordConfirm}
       />
 
       <div className="flex align-center items-end gap-2">

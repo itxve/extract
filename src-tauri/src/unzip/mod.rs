@@ -341,7 +341,7 @@ fn testf() -> () {
     let path = std::path::Path::new("/Users/apple/Downloads/Compressed/test.7z");
     let mut handle = SevenZipHandler {
         archive_path: path.to_path_buf(),
-        password: String::from("888"),
+        password: String::from("3"),
     };
 
     let ff = handle.list_files();

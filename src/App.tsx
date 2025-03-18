@@ -78,9 +78,12 @@ function App() {
   const macos_run_args = async () => {
     try {
       const path = (await getCurrent())?.[0];
+      console.log("path :", path);
+
       if (path && path.startsWith("file:///")) {
-        setValue(path.replace("file://", ""));
-        loadList(v, password);
+        let v_path = path.replace("file://", "");
+        setValue(v_path);
+        loadList(v_path, password);
       }
     } catch (err) {
       console.log("macos error :", err);

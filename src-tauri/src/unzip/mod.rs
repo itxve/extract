@@ -93,7 +93,7 @@ impl ArchiveHandler for ZipHandler {
                     .map_err(custom_error)?
             };
 
-            let full_path = file.name().to_string();
+            let full_path = String::from_utf8(file.name_raw().to_vec()).unwrap_or_default();
             let is_dir = file.is_dir();
             let modified = file.last_modified().map(|m| m.to_string());
             let name = full_path.split('/').last().unwrap_or("").to_string();
@@ -171,7 +171,7 @@ impl ArchiveHandler for ZipHandler {
                     .map_err(custom_error)?
             };
 
-            let full_path = file.name().to_string();
+            let full_path = String::from_utf8(file.name_raw().to_vec()).unwrap_or_default();
 
             // 跳过 macOS 系统文件
             if full_path.starts_with("__MACOSX") {
@@ -338,8 +338,10 @@ pub struct SevenZipHandler {
 
 #[test]
 fn testf() -> () {
-    let path = std::path::Path::new("/Users/apple/Downloads/Compressed/test.7z");
-    let mut handle = SevenZipHandler {
+    let path = std::path::Path::new(
+        "/Users/apple/Downloads/Compressed/时间序列分析——基于R（第2版）案例数据.zip",
+    );
+    let mut handle = ZipHandler {
         archive_path: path.to_path_buf(),
         password: String::from("3"),
     };

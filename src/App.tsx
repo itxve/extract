@@ -88,6 +88,7 @@ function App() {
         const paths = event.payload.paths;
         if (paths.length == 1) {
           if (paths[0]) {
+            setValue(paths[0]);
             loadList(paths[0], password);
           }
         } else {

@@ -11,7 +11,7 @@ mod unzip;
 fn run_args(app: tauri::AppHandle) -> Vec<String> {
     let mut args: Vec<String> = Vec::new();
     if cfg!(target_os = "windows") {
-        args = env::args().collect();
+        args = env::args().skip(1).collect();
     } else if cfg!(target_os = "macos") {
         args = match app.deep_link().get_current().unwrap_or_default() {
             Some(urls) => urls.iter().map(|url| url.to_string()).collect(),

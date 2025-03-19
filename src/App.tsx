@@ -12,7 +12,7 @@ import { run_args } from "./commands";
 import "./App.css";
 
 import { getCurrent } from "@tauri-apps/plugin-deep-link";
-import { getCurrentWindow } from "@tauri-apps/api/window";
+// import { getCurrentWindow } from "@tauri-apps/api/window";
 import { getCurrentWebview } from "@tauri-apps/api/webview";
 
 import { open } from "@tauri-apps/plugin-dialog";
@@ -20,8 +20,8 @@ import { Button } from "@heroui/react";
 
 function App() {
   const [v, setV] = useState("");
-  const [ww, setWW] = useState(800);
-  const [hh, setHH] = useState(600);
+  const [ww, setWW] = useState(1170);
+  const [hh, setHH] = useState(850);
   const [uzLoading, setUzloading] = useState(false);
   const [passwordRequire, setPasswordRequire] = useState(false);
   const [extractPasswordRequire, setExtractPasswordRequire] = useState(false);
@@ -46,57 +46,52 @@ function App() {
   };
 
   useEffect(() => {
-    getCurrentWindow()
-      .innerSize()
-      .then(async (res) => {
-        const scaleFactor = await getCurrentWindow().scaleFactor();
-        console.log("res :", res, res.width / scaleFactor);
-        const width = res.width / scaleFactor - 40;
-        const height = res.height / scaleFactor - 40;
-
-        setWW(width || 780);
-        setHH(height || 600);
-      });
-    getCurrentWindow().onResized(async (res) => {
-      const scaleFactor = await getCurrentWindow().scaleFactor();
-      const width = res.payload.width / scaleFactor - 40;
-      const height = res.payload.height / scaleFactor - 40;
-      setWW(width || 780);
-      setHH(height || 600);
-    });
+    // getCurrentWindow()
+    //   .innerSize()
+    //   .then(async (res) => {
+    //     const scaleFactor = await getCurrentWindow().scaleFactor();
+    //     console.log("res :", res, res.width / scaleFactor);
+    //     const width = res.width / scaleFactor - 40;
+    //     const height = res.height / scaleFactor - 40;
+    //     setWW(width || 780);
+    //     setHH(height || 600);
+    //   });
+    // getCurrentWindow().onResized(async (res) => {
+    //   const scaleFactor = await getCurrentWindow().scaleFactor();
+    //   const width = res.payload.width / scaleFactor - 40;
+    //   const height = res.payload.height / scaleFactor - 40;
+    //   setWW(width || 780);
+    //   setHH(height || 600);
+    // });
   }, []);
-  const win_run_args = async () => {
+  const cli_run_args = async () => {
     try {
-      const path = await run_args();
-      if (path) {
-        setValue(path);
+      const paths = await run_args();
+      console.log("path==》 :", paths);
+      if (paths) {
+        let path = paths[0];
+        if (path && path.startsWith("file://")) {
+          path = path.replace("file://", "");
+        }
+        let v_path = decodeURIComponent(path);
+        setValue(v_path);
+        loadList(v_path, password);
       }
     } catch (err) {
       console.log("win error :", err);
     }
   };
 
-  const macos_run_args = async () => {
-    try {
-      const path = (await getCurrent())?.[0];
-      console.log("path :", path);
-
-      if (path && path.startsWith("file:///")) {
-        let v_path = path.replace("file://", "");
-        setValue(v_path);
-        loadList(v_path, password);
-      }
-    } catch (err) {
-      console.log("macos error :", err);
-    }
-  };
-
   const listenFileDrop = async () => {
     return getCurrentWebview().onDragDropEvent((event) => {
       if (event.payload.type === "drop") {
-        const [path] = event.payload.paths;
-        if (path) {
-          loadList(path, password);
+        const paths = event.payload.paths;
+        if (paths.length == 1) {
+          if (paths[0]) {
+            loadList(paths[0], password);
+          }
+        } else {
+          console.log("event :", paths);
         }
       }
     });
@@ -201,8 +196,7 @@ function App() {
   };
 
   useEffect(() => {
-    win_run_args();
-    macos_run_args();
+    cli_run_args();
     listenFileDrop();
   }, []);
   return (
@@ -230,13 +224,13 @@ function App() {
           解压到
         </Button>
       </div>
-      <div>
+      <div className="mt-2">
         {!!zipList.length ? (
           <FileTree width={ww} height={hh} data={zipList} />
         ) : (
           <div
-            style={{ width: ww, height: hh - 40 }}
-            className="bg-blue-200 flex items-center justify-center text-center"
+            style={{ width: ww, height: hh }}
+            className="bg-blue-200 flex items-center self-center justify-center text-center"
           >
             <div>
               <span className="p-5  z-10">

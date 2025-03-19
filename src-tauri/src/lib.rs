@@ -1,23 +1,24 @@
 use std::env;
 
-use tauri::Manager;
+use std::fs::read_to_string;
+use std::path::Path;
+use tauri::{App, Manager};
+use tauri_plugin_deep_link::DeepLinkExt;
 
 mod unzip;
 
 #[tauri::command]
-fn run_args() -> (String, String) {
-    use std::fs::read_to_string;
-    use std::path::Path;
-    let mut result = "".to_owned();
-    let args: Vec<String> = env::args().collect();
-    if args.len() == 2 {
-        let path = Path::new(&args[1]);
-        let extension = format!(".{}", path.extension().unwrap().to_string_lossy());
-        result = read_to_string(path).expect("read error");
-        (extension, result)
-    } else {
-        (result, "".to_owned())
+fn run_args(app: tauri::AppHandle) -> Vec<String> {
+    let mut args: Vec<String> = Vec::new();
+    if cfg!(target_os = "windows") {
+        args = env::args().collect();
+    } else if cfg!(target_os = "macos") {
+        args = match app.deep_link().get_current().unwrap_or_default() {
+            Some(urls) => urls.iter().map(|url| url.to_string()).collect(),
+            None => Vec::new(),
+        }
     }
+    args
 }
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]

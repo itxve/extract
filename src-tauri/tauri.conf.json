@@ -13,9 +13,9 @@
     "windows": [
       {
         "title": "解压",
-        "width": 800,
-        "height": 600,
-        "resizable": true,
+        "width": 1200,
+        "height": 900,
+        "resizable": false,
         "fullscreen": false
       }
     ],

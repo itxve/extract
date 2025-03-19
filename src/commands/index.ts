@@ -34,6 +34,6 @@ export async function archiveExtract(
   return invoke<void>("archive_extract", { path, targetPath, password });
 }
 
-export async function run_args(): Promise<string> {
-  return invoke<string>("run_args");
+export async function run_args(): Promise<string[]> {
+  return invoke<string[]>("run_args");
 }

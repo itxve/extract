@@ -1,10 +1,9 @@
 use std::env;
 
-use std::fs::read_to_string;
-use std::path::Path;
 use tauri::{App, Manager};
 use tauri_plugin_deep_link::DeepLinkExt;
 
+mod file_ext;
 mod unzip;
 
 #[tauri::command]
@@ -24,6 +23,13 @@ fn run_args(app: tauri::AppHandle) -> Vec<String> {
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     tauri::Builder::default()
+        .plugin(
+            tauri_plugin_log::Builder::new()
+                .target(tauri_plugin_log::Target::new(
+                    tauri_plugin_log::TargetKind::Webview,
+                ))
+                .build(),
+        )
         .plugin(tauri_plugin_dialog::init())
         .plugin(tauri_plugin_deep_link::init())
         .invoke_handler(tauri::generate_handler![
@@ -32,17 +38,8 @@ pub fn run() {
             run_args
         ])
         .setup(|app| {
-            if cfg!(debug_assertions) {
-                use tauri::WebviewWindow;
-                app.handle().plugin(
-                    tauri_plugin_log::Builder::default()
-                        .level(log::LevelFilter::Info)
-                        .build(),
-                )?;
-
-                let window: WebviewWindow = app.get_webview_window("main").unwrap();
-                window.open_devtools();
-            }
+            let inspect = file_ext::Inspect::new(app.handle().clone())?;
+            file_ext::load(inspect);
             Ok(())
         })
         .run(tauri::generate_context!())

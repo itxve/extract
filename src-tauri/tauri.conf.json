@@ -9,16 +9,21 @@
     "beforeDevCommand": "npm run dev",
     "beforeBuildCommand": "npm run build"
   },
+  "plugins": {
+    "cli": {
+      "description": "",
+      "args": [
+        {
+          "name": "path",
+          "description": "",
+          "index": 1,
+          "takesValue": true
+        }
+      ]
+    }
+  },
   "app": {
-    "windows": [
-      {
-        "title": "解压",
-        "width": 1200,
-        "height": 900,
-        "resizable": false,
-        "fullscreen": false
-      }
-    ],
+    "windows": [],
     "security": {
       "csp": null
     }
@@ -36,6 +41,7 @@
     "fileAssociations": [
       {
         "ext": [
+          "*",
           "zip",
           "rar",
           "7z",

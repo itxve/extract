@@ -673,7 +673,7 @@ pub fn create_handler(
 pub fn archive_list_files(path: String, password: String) -> ResultR<Vec<TreeNode<ArchiveEntry>>> {
     let path = std::path::Path::new(&path);
     let format = extutil::ArchiveFormat::from_path(path);
-    println!("{:#?}", format);
+    log::info!("archive_list_files:{:#?}", format);
     let mut handle = create_handler(path, format, password);
     handle.list_files()
 }
@@ -683,7 +683,7 @@ pub fn archive_extract(path: String, target_path: String, password: String) -> R
     let path = std::path::Path::new(&path);
     let target_path = std::path::Path::new(&target_path);
     let format = extutil::ArchiveFormat::from_path(path);
-    println!("{:#?}", format);
+    log::info!("archive_extract:{:#?}", format);
     let mut handle = create_handler(path, format, password);
     handle.extract(target_path)
 }

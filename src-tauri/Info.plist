@@ -1,0 +1,30 @@
+<!-- https://github.com/ok-nick/c2pa-preview/tree/main/backend/src/file_ext -->
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+	<dict>
+		<key>NSServices</key>
+		<array>
+			<dict>
+				<key>NSMenuItem</key>
+				<dict>
+					<key>default</key>
+					<string>extract action</string>
+				</dict>
+				<key>NSMessage</key>
+				<string>inspectCredentialsWithPasteboard</string>
+				<key>NSPortName</key>
+				<string>extract</string>
+				<key>NSRequiredContext</key>
+				<dict>
+					<key>NSTextContent</key>
+					<string>FilePath</string>
+				</dict>
+				<key>NSSendFileTypes</key>
+				<array>
+					<string>public.item</string>
+				</array>
+			</dict>
+		</array>
+	</dict>
+</plist>

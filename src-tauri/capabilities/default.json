@@ -3,12 +3,19 @@
   "identifier": "default",
   "description": "enables the default permissions",
   "windows": [
+    "extract-*",
     "main"
   ],
   "permissions": [
     "core:default",
     "deep-link:default",
-    "deep-link:default",
-    "dialog:default"
+    "dialog:default",
+    "log:default",
+    "core:event:allow-emit",
+    "core:event:allow-emit-to",
+    "core:event:allow-unlisten",
+    "core:event:allow-listen",
+    "dialog:allow-message",
+    "dialog:allow-open"
   ]
 }

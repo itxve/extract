@@ -14,7 +14,8 @@ import "./App.css";
 import { getCurrent } from "@tauri-apps/plugin-deep-link";
 // import { getCurrentWindow } from "@tauri-apps/api/window";
 import { getCurrentWebview } from "@tauri-apps/api/webview";
-
+import { attachConsole } from "@tauri-apps/plugin-log";
+import { listen } from "@tauri-apps/api/event";
 import { open } from "@tauri-apps/plugin-dialog";
 import { Button } from "@heroui/react";
 
@@ -28,6 +29,7 @@ function App() {
   const [password, setPassword] = useState("");
   const [zipList, setZipList] = useState<TreeNode<ArchiveEntry>[]>([]);
   const [extractPath, setExtractPath] = useState("");
+  const [zipFiles, setZipFiles] = useState<string[]>([]);
 
   const _extensions = [
     "7z",
@@ -46,6 +48,24 @@ function App() {
   };
 
   useEffect(() => {
+    attachConsole().then(() => {
+      console.log("Console attached");
+    });
+
+    // 通知前端已经准备好
+    getCurrentWebview()
+      .emit("ready", getCurrentWebview().label)
+      .catch((err) => {
+        console.log("ready::err :", err);
+      });
+
+    listen("in-extract", (event) => {
+      console.log("in-extract", event.payload);
+      if (event.payload) {
+        setZipFiles(event.payload as string[]);
+      }
+    });
+
     // getCurrentWindow()
     //   .innerSize()
     //   .then(async (res) => {
@@ -70,6 +90,9 @@ function App() {
       console.log("path==》 :", paths);
       if (paths) {
         let path = paths[0];
+        if (!path) {
+          return;
+        }
         if (path && path.startsWith("file://")) {
           path = path.replace("file://", "");
         }
